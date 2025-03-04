@@ -2,14 +2,12 @@ import React from 'react'
 
 const Logo = () => {
   return (
-
-    <div id='logo' className='w-72  border-neutral-300 h-8 flex flex-col justify-center'>
-      <div className='flex items-center gap-4'>
-        <img src="/assets/github-mark-white.png" alt="" className='w-[30px] h-[30px]' />
-        <p className='text-neutral-200 font-bold'>GITHUB</p>
+    <div id='logo' className='w-auto sm:w-72 h-8 flex flex-col justify-center'>
+      <div className='flex items-center gap-2 sm:gap-4'>
+        <img src="/assets/github-mark-white.png" alt="GitHub Logo" className='w-[25px] h-[25px] sm:w-[30px] sm:h-[30px]' />
+        <p className='text-neutral-200 text-sm sm:text-base font-bold'>GITHUB</p>
       </div>
     </div>
-
   )
 }
 
