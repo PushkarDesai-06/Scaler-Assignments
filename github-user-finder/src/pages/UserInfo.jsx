@@ -1,6 +1,6 @@
 import React from 'react'
-import { MdLocationPin, MdBusiness, MdEmail, MdLink, MdCalendarToday, MdArrowBack } from "react-icons/md";
-import { FaXTwitter, FaStar, FaCodeBranch, FaGithub, FaUsers, FaUserPlus } from "react-icons/fa6";
+import { MdLocationPin, MdBusiness, MdEmail, MdLink, MdCalendarToday, MdArrowBack, MdInsights, MdOutlineCodeOff } from "react-icons/md";
+import { FaXTwitter, FaStar, FaCodeBranch, FaGithub, FaUsers, FaUserPlus, FaCode, FaLink } from "react-icons/fa6";
 import { Link, useParams } from 'react-router-dom';
 import useGitHubUser from '../hooks/useGitHubUser';
 import { ClipLoader } from 'react-spinners';
@@ -57,6 +57,153 @@ const UserInfo = () => {
     month: 'short',
     day: 'numeric'
   });
+
+  const renderUserStatistics = () => {
+    if (!user) return null;
+
+    // Extract main languages from repositories
+    const languages = topRepos
+      .filter(repo => repo.language)
+      .map(repo => repo.language)
+      .reduce((acc, lang) => {
+        acc[lang] = (acc[lang] || 0) + 1;
+        return acc;
+      }, {});
+
+    // Convert to array and sort by frequency
+    const topLanguages = Object.entries(languages)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5); // Get top 5 languages
+
+    // Get average stars per repository
+    const avgStars = topRepos.length > 0
+      ? (topRepos.reduce((sum, repo) => sum + repo.stars, 0) / topRepos.length).toFixed(1)
+      : 0;
+
+    return (
+      <div className="bg-neutral-800/70 rounded-xl p-6 border border-neutral-700 mb-8">
+        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+          <MdInsights className="text-blue-400" />
+          Profile Overview
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Most used languages */}
+          <div className="bg-neutral-800/80 p-4 rounded-lg border border-neutral-700/50">
+            <h3 className="text-md font-medium text-blue-300 mb-3 flex items-center gap-2">
+              <FaCode className="text-sm" /> Preferred Languages
+            </h3>
+
+            {topLanguages.length > 0 ? (
+              <div className="space-y-2">
+                {topLanguages.map(([language, count], index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span className={`w-3 h-3 rounded-full ${index === 0 ? 'bg-yellow-400' :
+                      index === 1 ? 'bg-blue-400' :
+                        index === 2 ? 'bg-green-400' :
+                          index === 3 ? 'bg-purple-400' : 'bg-red-400'
+                      }`}></span>
+                    <span className="text-neutral-300">{language}</span>
+                    <div className="flex-grow h-1 bg-neutral-700 rounded-full ml-1">
+                      <div
+                        className={`h-1 rounded-full ${index === 0 ? 'bg-yellow-400' :
+                          index === 1 ? 'bg-blue-400' :
+                            index === 2 ? 'bg-green-400' :
+                              index === 3 ? 'bg-purple-400' : 'bg-red-400'
+                          }`}
+                        style={{ width: `${(count / topLanguages[0][1]) * 100}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-xs text-neutral-400">{count} repos</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-neutral-400 text-sm">No language data available</p>
+            )}
+          </div>
+
+          {/* Repository statistics */}
+          <div className="bg-neutral-800/80 p-4 rounded-lg border border-neutral-700/50">
+            <h3 className="text-md font-medium text-blue-300 mb-3">
+              Repository Stats
+            </h3>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-300 text-sm">Average stars per repo:</span>
+                <span className="font-medium text-yellow-400 flex items-center gap-1">
+                  <FaStar className="text-xs" /> {avgStars}
+                </span>
+              </div>
+
+              {topRepos.length > 0 && (
+                <div className="flex justify-between items-center">
+                  <span className="text-neutral-300 text-sm">Most starred:</span>
+                  <a
+                    href={`${user.html_url}/${topRepos[0].name}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 transition flex items-center gap-1"
+                  >
+                    {topRepos[0].name} <FaLink className="text-xs" />
+                  </a>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-300 text-sm">Public repos:</span>
+                <span className="font-medium text-neutral-200">{user.public_repos}</span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-neutral-300 text-sm">Followers/Following ratio:</span>
+                <span className="font-medium text-neutral-200">
+                  {user.following > 0 ? (user.followers / user.following).toFixed(1) : user.followers > 0 ? '∞' : '0'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Additional profile links */}
+        <div className="mt-5 pt-4 border-t border-neutral-700">
+          <h3 className="text-md font-medium text-blue-300 mb-3">
+            Additional Resources
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <a
+              href={`${user.html_url}?tab=repositories`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-neutral-700/50 hover:bg-neutral-700 transition p-2 rounded flex items-center gap-2 text-sm"
+            >
+              <FaCodeBranch className="text-blue-400" /> All Repositories
+            </a>
+
+            <a
+              href={`${user.html_url}?tab=stars`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-neutral-700/50 hover:bg-neutral-700 transition p-2 rounded flex items-center gap-2 text-sm"
+            >
+              <FaStar className="text-yellow-400" /> Starred Projects
+            </a>
+
+            <a
+              href={`${user.html_url}?tab=followers`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-neutral-700/50 hover:bg-neutral-700 transition p-2 rounded flex items-center gap-2 text-sm"
+            >
+              <FaUsers className="text-blue-400" /> Followers
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white py-6 px-4 sm:px-6 md:px-8">
@@ -182,8 +329,11 @@ const UserInfo = () => {
           </div>
         </div>
 
+        {/* Replace contribution activity with user statistics */}
+        {renderUserStatistics()}
+
         {/* Repositories section */}
-        <div className="mb-8">
+        <div className="mb-8 mt-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold flex items-center gap-2">
               <FaCodeBranch className="text-blue-400" /> Popular Repositories
@@ -234,16 +384,6 @@ const UserInfo = () => {
                 No repositories found
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Activity chart - placeholder */}
-        <div className="bg-neutral-800/70 rounded-xl p-6 border border-neutral-700">
-          <h2 className="text-xl font-bold mb-4">Contribution Activity</h2>
-          <div className="h-[200px] bg-neutral-700/30 rounded-md flex items-center justify-center">
-            <p className="text-neutral-400">
-              Contribution graph would appear here with more implementation
-            </p>
           </div>
         </div>
       </div>
