@@ -2,10 +2,11 @@ import React from 'react'
 import { MdLocationPin, MdBusiness, MdEmail, MdLink, MdCalendarToday } from "react-icons/md";
 import { FaXTwitter, FaStar, FaCodeBranch, FaGithub } from "react-icons/fa6";
 import DataContainer from './DataContainer';
+import { ClipLoader } from 'react-spinners';
 
 const UserCard = ({
   username = 'Sample Username',
-  bio = 'Sample Bio this is a random text',
+  bio='Not Specified : (',
   profileLink = 'https://github.com/PushkarDesai-06',
   country = 'India',
   id = 'sampleid',
@@ -36,8 +37,8 @@ const UserCard = ({
     <div className='text-white w-full max-w-[800px] border border-neutral-600 mx-4 my-4 rounded-md overflow-hidden flex flex-col sm:flex-row'>
 
       {/* Left sidebar - stacks on top on mobile */}
-      <div className='w-full sm:w-[150px] bg-neutral-800 rounded-md border-neutral-700 flex flex-col items-center p-2'>
-        <img src={avatarUrl} alt={`${username}'s avatar`} className="rounded-full w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] object-cover border-2 border-blue-500/50" />
+      <div className='w-full sm:w-[150px] bg-neutral-800 rounded-md border-neutral-700 flex flex-col items-center p-2'>{
+        <img src={avatarUrl} alt={`${username}'s avatar`} className="rounded-full w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] object-cover border-2 border-blue-500/50" /> || <ClipLoader />}
 
         {/* Content below avatar */}
         <div className="mt-2 flex flex-col items-center w-full">
