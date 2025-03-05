@@ -58,7 +58,7 @@ const UserInfo = () => {
     day: 'numeric'
   });
 
-  const renderUserStatistics = () => {
+  const RenderUserStatistics = () => {
     if (!user) return null;
 
     // Extract main languages from repositories
@@ -330,7 +330,8 @@ const UserInfo = () => {
         </div>
 
         {/* Replace contribution activity with user statistics */}
-        {renderUserStatistics()}
+        {/* {renderUserStatistics()} */}
+        <RenderUserStatistics/>
 
         {/* Repositories section */}
         <div className="mb-8 mt-8">
